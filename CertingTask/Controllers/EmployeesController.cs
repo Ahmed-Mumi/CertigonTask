@@ -45,18 +45,23 @@ namespace CertingTask.Controllers
         [HttpPut]
         public async Task<ActionResult> UpdateEmployee(UpdateEmployeeDto updateEmployeeDto)
         {
-            if (await _employeeService.UpdateEmployee(updateEmployeeDto))
+            var employee = await _employeeService.GetEmployeeById(updateEmployeeDto.Id);
+            if (employee == null)
+                return NotFound("Employee does not exist.");
+            if (await _employeeService.UpdateEmployee(updateEmployeeDto, employee))
                 return NoContent();
             //if savechanges function is false we would return BadRequest("Failed to update employee.");
-            return NotFound("Employee does not exist.");
+            return BadRequest("Failed to update employee");
         }
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteEmployee(int id)
         {
-            if (await _employeeService.DeleteEmployee(id))
+            var employee = await _employeeService.GetEmployeeById(id);
+            if (employee == null)
+                return NotFound("Employee does not exist.");
+            if (await _employeeService.DeleteEmployee(employee))
                 return Ok();
-            //if savechanges function is false we would return BadRequest("Failed to delete employee.");
-            return NotFound("Employee does not exist.");
+            return BadRequest("Failed to delete employee");
         }
     }
 }

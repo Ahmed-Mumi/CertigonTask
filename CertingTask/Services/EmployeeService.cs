@@ -29,6 +29,11 @@ namespace CertingTask.Services
             var employeeReturn = _mapper.Map<EmployeeDto>(employee);
             return employeeReturn;
         }
+        public async Task<Employee> GetEmployeeById(int id)
+        {
+            var employee = await _unitOfWork.EmployeeRepository.GetEmployeeAsync(id);
+            return employee;
+        }
         public async Task<IEnumerable<EmployeeDto>> GetInActiveEmployees(bool active)
         {
             var employees = await _unitOfWork.EmployeeRepository.GetInActiveEmployeeAsync(active);
@@ -44,21 +49,17 @@ namespace CertingTask.Services
             //return await _unitOfWork.Complete();
         }
 
-        public async Task<bool> UpdateEmployee(UpdateEmployeeDto updateEmployeeDto)
+        public async Task<bool> UpdateEmployee(UpdateEmployeeDto updateEmployeeDto, Employee employee)
         {
-            var employeeUpdate = await _unitOfWork.EmployeeRepository.GetEmployeeAsync(updateEmployeeDto.Id);
-            if (employeeUpdate == null) return false;
-            _mapper.Map(updateEmployeeDto, employeeUpdate);
-            _unitOfWork.EmployeeRepository.UpdateEmployee(employeeUpdate);
+            _mapper.Map(updateEmployeeDto, employee);
+            _unitOfWork.EmployeeRepository.UpdateEmployee(employee);
             return true;
             //return await _unitOfWork.Complete();
         }
 
-        public async Task<bool> DeleteEmployee(int id)
+        public async Task<bool> DeleteEmployee(Employee employee)
         {
-            var employeeDelete = await _unitOfWork.EmployeeRepository.GetEmployeeAsync(id);
-            if (employeeDelete == null) return false;
-            _unitOfWork.EmployeeRepository.DeleteEmployee(employeeDelete);
+            _unitOfWork.EmployeeRepository.DeleteEmployee(employee);
             return true;
             //return await _unitOfWork.Complete();
         }
